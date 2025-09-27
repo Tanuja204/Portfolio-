@@ -1,357 +1,452 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LifeEase – Smart Life Planner</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet" />
-  <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
-    html {
-      scroll-behavior: smooth;
-    }
-    body {
-      background: #1a1a2e;
-      color: #fff;
-      overflow-x: hidden;
-    }
-
-    /* Navbar */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      background: rgba(10, 10, 30, 0.95);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 40px;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      backdrop-filter: blur(10px);
-      transition: background 0.3s ease;
-    }
-
-    nav .logo {
-      font-weight: 800;
-      font-size: 1.8rem;
-      letter-spacing: 1px;
-      color: #ff5f6d;
-      cursor: pointer;
-      transition: 0.3s ease;
-    }
-
-    nav .logo:hover {
-      color: #ffc371;
-      transform: scale(1.05);
-    }
-
-    nav ul {
-      list-style: none;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 25px;
-    }
-
-    nav ul li {
-      position: relative;
-    }
-
-    nav ul li a {
-      color: #ddd;
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 1rem;
-      padding: 10px 16px;
-      border-radius: 10px;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      display: block;
-    }
-
-    nav ul li a::after {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 2px;
-      left: 0;
-      bottom: 0;
-      background-color: #ff5f6d;
-      transform: scaleX(0);
-      transition: transform 0.3s ease;
-      transform-origin: right;
-    }
-
-    nav ul li a:hover::after {
-      transform: scaleX(1);
-      transform-origin: left;
-    }
-
-    nav ul li a:hover,
-    nav ul li a.active {
-      background: rgba(255, 95, 109, 0.2);
-      color: #fff;
-      box-shadow: 0 4px 15px rgba(255, 95, 109, 0.4);
-    }
-
-    /* Three dots menu button for small screens */
-    .menu-btn {
-      display: none;
-      flex-direction: column;
-      justify-content: space-around;
-      width: 28px;
-      height: 28px;
-      cursor: pointer;
-      z-index: 1100;
-    }
-
-    .menu-btn div {
-      width: 5px;
-      height: 5px;
-      background-color: #ffc371;
-      border-radius: 50%;
-      margin: 3px 0;
-      transition: all 0.3s ease;
-    }
-
-    /* Show menu-btn only on mobile */
-    @media (max-width: 768px) {
-      nav {
-        padding: 15px 20px;
-      }
-
-      nav ul {
-        position: fixed;
-        top: 60px;
-        right: 20px;
-        background: rgba(10, 10, 30, 0.95);
-        backdrop-filter: blur(10px);
-        flex-direction: column;
-        width: 200px;
-        border-radius: 12px;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.4s ease;
-      }
-
-      nav ul.show {
-        max-height: 500px; /* enough to show all items */
-      }
-
-      nav ul li {
-        margin: 15px 0;
-      }
-
-      nav ul li a {
-        padding: 10px 20px;
-        font-size: 1.1rem;
-      }
-
-      .menu-btn {
-        display: flex;
-      }
-    }
-
-    /* Animate menu button when active */
-    .menu-btn.active div:nth-child(1) {
-      transform: translateY(8px) scale(0);
-      opacity: 0;
-    }
-
-    .menu-btn.active div:nth-child(2) {
-      transform: rotate(90deg);
-    }
-
-    .menu-btn.active div:nth-child(3) {
-      transform: translateY(-8px) scale(0);
-      opacity: 0;
-    }
-
-    /* Hero Section with background image */
-    .hero {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 0 20px;
-      background: url('https://images.unsplash.com/photo-1580894894513-89d3701b18d2?auto=format&fit=crop&w=1400&q=80') no-repeat center center/cover;
-      position: relative;
-      margin-top: 70px;
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.6); /* Dark overlay */
-      z-index: 0;
-    }
-    .hero * {
-      position: relative;
-      z-index: 1;
-    }
-    .hero h1 {
-      font-size: 4rem;
-      font-weight: 800;
-      margin-bottom: 20px;
-      animation: fadeIn 1s ease-in-out;
-    }
-    .hero p {
-      font-size: 1.3rem;
-      max-width: 700px;
-      margin-bottom: 40px;
-      color: #ddd;
-      animation: fadeIn 1.3s ease-in-out;
-    }
-    .hero button {
-      background: linear-gradient(45deg, #ff5f6d, #ffc371);
-      border: none;
-      padding: 14px 42px;
-      font-size: 1.1rem;
-      color: white;
-      font-weight: 600;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      animation: fadeIn 1.6s ease-in-out;
-    }
-    .hero button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(45deg, #ffc371, #ff5f6d);
-    }
-
-    /* Section Styles */
-    section {
-      padding: 90px 20px;
-      max-width: 950px;
-      min-height: 30vh;
-      margin: auto;
-      text-align: center;
-    }
-    section h2 {
-      font-size: 2.8rem;
-      margin-bottom: 20px;
-      color: #ff5f6d;
-    }
-    section p {
-      font-size: 1.1rem;
-      color: #ccc;
-    }
-
-    /* Responsive text */
-    @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2.5rem;
-      }
-      .hero p {
-        font-size: 1rem;
-      }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tanuja's Portfolio</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 </head>
-<body>
 
-  <nav>
-    <div class="logo">LifeEase</div>
+<body class="light">
+
+
+  <header>
+  <div class="brand">
+      <div class="logo" style=" border: 5px solid #114a7c;
+  box-shadow: 0px 5px 20px rgba(67, 90, 204, 0.5);color: rgb(2, 2, 2);">TB</div>
+      <div>
+        <h1>Tanuja Bisht</h1>
+        <div style="font-size:.78rem;color:wheat">Web Developer • UI enthusiast</div>
+      </div>
+    </div>
     <div class="menu-btn" id="menuBtn" aria-label="Toggle menu" tabindex="0" role="button">
       <div></div>
       <div></div>
       <div></div>
     </div>
-    <ul id="nav-links">
-      <li><a href="#home" class="nav-link active">Home</a></li>
-      <li><a href="Explore.html" class="nav-link">Features</a></li>
-      <li><a href="Dashboard.html" class="nav-link">Dashboard</a></li>
-      <li><a href="todo.html" class="nav-link">To-Do</a></li> 
-      <li><a href="contact.html" class="nav-link">About</a></li>
-      <li><a href="sign.html" class="nav-link">Contact</a></li>
-    </ul>
-  </nav>
+    <nav>
+      <ul id="nav-links" class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About Me</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+     <button id="theme-toggle">🌙</button>
+  </header>
+  <!-- <div id="particles-js"></div> -->
+   <!-- Background Video -->
+<video autoplay muted loop id="bg-video">
+  <source src="video.mp4" type="video/mp4">
+  Your browser does not support HTML5 video.
+</video>
 
-  <section class="hero" id="home">
-    <h1>Welcome to LifeEase</h1>
-    <p>Your personal productivity planner to manage tasks, goals & routines all in one place.</p>
-    <button onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Explore Features</button>
+
+  <section class="home-content" id="home">
+    <div class="home">
+      <h3 style="font-weight: 500; font-size: 1.3rem;">Hello I'm</h3>
+      <h1 style="color: aqua;">Tanuja Bisht</h1>
+      <h2>I’m a <span id="typed"></span></h2>
+      <p>I design and build modern, responsive, and user-friendly websites.
+        Let’s create something amazing together!</p>
+      <div class="btns">
+        <a href="#Projects" class="btn">View My Work</a>
+        <a href="TANU RESUME.pdf" class="btn">Download CV</a>
+      </div>
+      <div class="socials">
+        <a href="https://www.instagram.com/yourusername" target="_blank" class="insta"><i
+            class="fab fa-instagram"></i></a>
+        <a href="https://www.linkedin.com/in/yourusername" target="_blank" class="linkedin"><i
+            class="fab fa-linkedin"></i></a>
+        <a href="https://github.com/yourusername" target="_blank" class="github"><i class="fab fa-github"></i></a>
+        <a href="https://twitter.com/yourusername" target="_blank" class="twitter"><i class="fab fa-twitter"></i></a>
+      </div>
+
+
+    </div>
+    <div class="home-img">
+      <img src="Tanuja.jpg" alt="profile">
+    </div>
   </section>
 
-  <section id="features">
-    <h2>Features</h2>
-    <p>Daily planner, habit tracker, reminders, calendar sync, and much more to keep you organized and focused.</p>
+  <section id="about" class="about">
+    <h2>About Me</h2>
+    <p>
+      Hi, I’m <b>Tanuja Bisht</b>, a passionate <span class="highlight">Web Developer</span> and technology
+      enthusiast.
+      I specialize in building <span class="highlight">modern, responsive, and user-friendly websites</span>
+      that deliver great experiences.
+    </p>
+
+    <div class="about-cards">
+      <div class="card">
+        <h3>🎯 My Goal</h3>
+        <p>To grow as a developer and contribute to impactful projects while continuously learning new
+          technologies.</p>
+      </div>
+      <div class="card">
+        <h3>💡 What I Do</h3>
+        <p>I design, code, and deploy websites using HTML, CSS, JavaScript, and modern frameworks.</p>
+      </div>
+      <div class="card">
+        <h3>🚀 Interests</h3>
+        <p>Exploring UI/UX design, freelancing, open-source projects, and creating digital products.</p>
+      </div>
+    </div>
+  </section>
+  <!-- Timeline Section -->
+  <section id="timeline" class="timeline">
+    <h2 class="section-title" style="color: yellow; font-size: 3rem; margin-bottom: 2rem; text-align: center;">My
+      Journey</h2>
+    <div class="timeline-container">
+
+      <!-- Education -->
+      <div class="timeline-item left">
+        <div class="content">
+          <h3>🎓 B.Sc. Computer Science</h3>
+          <span>2023 - Present</span>
+          <p>
+            Currently pursuing my Bachelor's in Computer Science.
+            Exploring web development, data structures, and problem-solving.
+          </p>
+        </div>
+      </div>
+
+      <div class="timeline-item right">
+        <div class="content">
+          <h3>📘 12th (PCM)</h3>
+          <span>2022</span>
+          <p>
+            Completed senior secondary education with a strong foundation
+            in Mathematics, Physics, and Computer Science.
+          </p>
+        </div>
+      </div>
+
+      <!-- Experience -->
+      <div class="timeline-item left">
+        <div class="content">
+          <h3>💻 Web Development Projects</h3>
+          <span>2023 - Ongoing</span>
+          <p>
+            Building creative websites including a Netflix-style clone,
+            coffee shop site, and hackathon projects using HTML, CSS, and JavaScript.
+          </p>
+        </div>
+      </div>
+
+      <div class="timeline-item right">
+        <div class="content">
+          <h3>🚀 Internship/Freelancing (Goal)</h3>
+          <span>2025</span>
+          <p>
+            Looking forward to internships and freelancing opportunities
+            to sharpen my skills and gain real-world experience.
+          </p>
+        </div>
+      </div>
+
+    </div>
   </section>
 
-  <section id="dashboard">
-    <h2>Dashboard</h2>
-    <p>Your central hub to view daily tasks, habits, calendar events, and goal progress at a glance.</p>
+  <section id="skills" class="skills-section">
+    <h2 class="section-title" style="color: yellow;">My Skills</h2>
+
+    <div class="skills-grid">
+
+      <!-- Frontend -->
+      <div class="skill-category">
+        <h3>Frontend</h3>
+        <div class="skill">
+          <span>HTML</span>
+          <div class="progress-bar">
+            <div style="width: 95%"></div>
+          </div>
+        </div>
+        <div class="skill">
+          <span>CSS</span>
+          <div class="progress-bar">
+            <div style="width: 85%"></div>
+          </div>
+        </div>
+        <div class="skill">
+          <span>JavaScript</span>
+          <div class="progress-bar">
+            <div style="width: 75%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Backend -->
+      <div class="skill-category">
+        <h3>Backend</h3>
+        <div class="skill">
+          <span>Node.js</span>
+          <div class="progress-bar">
+            <div style="width: 70%"></div>
+          </div>
+        </div>
+        <div class="skill">
+          <span>Express.js</span>
+          <div class="progress-bar">
+            <div style="width: 65%"></div>
+          </div>
+        </div>
+        <div class="skill">
+          <span>MongoDB</span>
+          <div class="progress-bar">
+            <div style="width: 60%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tools -->
+      <div class="skill-category">
+        <h3>Tools</h3>
+        <div class="skill">
+          <span>Git & GitHub</span>
+          <div class="progress-bar">
+            <div style="width: 80%"></div>
+          </div>
+        </div>
+        <div class="skill">
+          <span>Figma</span>
+          <div class="progress-bar">
+            <div style="width: 75%"></div>
+          </div>
+        </div>
+        <div class="skill">
+          <span>VS Code</span>
+          <div class="progress-bar">
+            <div style="width: 90%"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </section>
 
-  <section id="todo">
-    <h2>To-Do List</h2>
-    <p>Create, update, and manage your daily tasks effectively with reminders and prioritization.</p>
-  </section>
+  <section id="projects">
+    <h2>My Projects</h2>
 
-  <section id="about">
-    <h2>About</h2>
-    <p>LifeEase is built for students, professionals, and anyone who wants a more organized life.</p>
+    <!-- Filter Buttons -->
+    <div class="filter-buttons">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="web">Web</button>
+      <button class="filter-btn" data-filter="uiux">UI/UX</button>
+      <button class="filter-btn" data-filter="hackathon">Hackathon</button>
+    </div>
+
+    <!-- Project Cards -->
+    <div class="projects-container">
+      <div class="project-card" data-category="web">
+        <!-- <img src="coffee.jpg" alt="Coffee Website"> -->
+        <img src="coffe.jpg"
+          alt="Coffee Website">
+        <div class="project-info">
+          <h3>Coffee Website</h3>
+          <p>A modern coffee shop website with animations & Google Sheets integration.</p>
+          <p class="tech">Tech: HTML, CSS, JavaScript</p>
+          <div class="project-links">
+            <a href="https://github.com/yourusername/project1" target="_blank" class="btn">GitHub</a>
+            <a href="" target="_blank" class="btn">Live Demo</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card" data-category="web">
+        <!-- <img src="movie.jpg" alt="Movie Website"> -->
+        <img src="mov.jpg"
+          alt="Movie Website">
+        <div class="project-info">
+          <h3>Movie Website</h3>
+          <p>A Netflix-style site with sliders, modals, and trending movies.</p>
+          <p class="tech">Tech: HTML, CSS, JS</p>
+          <div class="project-links">
+            <a href="http://127.0.0.1:5500/Coffee.html#Products" target="_blank" class="btn">GitHub</a>
+            <a href="https://yourwebsite.com/project2" target="_blank" class="btn">Live Demo</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card" data-category="hackathon">
+        <!-- <img src="life.jpg.png" alt="LifeEase Planner"> -->
+
+        <img src="https://images.unsplash.com/photo-1506784365847-bbad939e9335?w=600&h=400&fit=crop"
+          alt="LifeEase Planner">
+
+        <div class="project-info">
+          <h3>LifeEase Planner</h3>
+          <p>A hackathon project: smart life planner for productivity & wellness.</p>
+          <p class="tech">Tech: HTML, CSS, JS</p>
+          <div class="project-links">
+            <a href="https://github.com/yourusername/project3" target="_blank" class="btn">GitHub</a>
+            <a href="LifeEase.html" target="_blank" class="btn">Live Demo</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card" data-category="uiux">
+        <!-- <img src="project4.jpg" alt="Portfolio Design"> -->
+           <!-- Portfolio UI Design -->
+        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=400&fit=crop"
+          alt="Portfolio Design">
+        <div class="project-info">
+          <h3>Portfolio UI Design</h3>
+          <p>A creative Figma portfolio design turned into a responsive website.</p>
+          <p class="tech">Tech: Figma, HTML, CSS</p>
+          <div class="project-links">
+            <a href="https://github.com/yourusername/project4" target="_blank" class="btn">GitHub</a>
+            <a href="https://yourwebsite.com/project4" target="_blank" class="btn">Live Demo</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section id="contact">
-    <h2>Contact</h2>
-    <p>We’d love to hear from you. Reach out to us for feedback or collaboration opportunities.</p>
+    <h2>Contact Me</h2>
+    <p>Have a project in mind? Let's work together 🚀</p>
+
+    <form id="contact-form" class="contact-form">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+
+    <div class="contact-socials">
+      <a href="https://instagram.com/yourprofile" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://linkedin.com/in/yourprofile" target="_blank"><i class="fab fa-linkedin"></i></a>
+      <a href="https://github.com/yourprofile" target="_blank"><i class="fab fa-github"></i></a>
+    </div>
   </section>
+  <footer>
+    <p>© 2025 Your Name | All Rights Reserved</p>
+    <p>Made with ❤️ by Me</p>
+  </footer>
 
-<script>
-  const menuBtn = document.getElementById('menuBtn');
-  const navLinks = document.getElementById('nav-links');
 
-  menuBtn.addEventListener('click', () => {
-    menuBtn.classList.toggle('active');
-    navLinks.classList.toggle('show');
-  });
 
-  // Accessibility toggle with keyboard (Enter, Space)
-  menuBtn.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter' || e.key === ' ') {
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("YOUR_PUBLIC_KEY");
+    })();
+  </script>
+  <script>
+    document.getElementById('contact-form').addEventListener('submit', function (e) {
       e.preventDefault();
-      menuBtn.classList.toggle('active');
-      navLinks.classList.toggle('show');
+      emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', this)
+        .then(() => {
+          alert("✅ Message Sent Successfully!");
+        }, (error) => {
+          alert("❌ Failed to send message: " + error);
+        });
+    });
+  </script>
+
+
+  <script>
+    var typed = new Typed("#typed", {
+      strings: ["Web Developer", "Designer", "Freelancer", "Tech Enthusiast"],
+      typeSpeed: 70,
+      backSpeed: 40,
+      backDelay: 1500,
+      loop: true
+    });
+
+const toggle = document.getElementById("theme-toggle");
+    let savedTheme = localStorage.getItem("theme");
+
+    // Agar saved theme hai to apply karo
+    if (savedTheme) {
+      document.body.className = savedTheme;
+      toggle.textContent = savedTheme === "light" ? "🌙" : "☀️";
+    }
+
+    toggle.addEventListener("click", () => {
+      if (document.body.classList.contains("light")) {
+        document.body.className = "dark";
+        localStorage.setItem("theme", "dark");
+        toggle.textContent = "☀️";
+      } else {
+        document.body.className = "light";
+        localStorage.setItem("theme", "light");
+        toggle.textContent = "🌙";
+      }
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const filterBtns = document.querySelectorAll(".filter-btn");
+      const projectCards = document.querySelectorAll(".project-card");
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          // remove active from all buttons
+          filterBtns.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          const filter = btn.getAttribute("data-filter");
+
+          projectCards.forEach(card => {
+            if (filter === "all" || card.getAttribute("data-category") === filter) {
+              card.classList.remove("hide");
+            } else {
+              card.classList.add("hide");
+            }
+          });
+        });
+      });
+    });
+
+const menuBtn = document.getElementById('menuBtn');
+const navLinks = document.getElementById('nav-links');
+const navLinkItems = document.querySelectorAll(".nav-link");
+
+// Toggle menu
+menuBtn.addEventListener('click', () => {
+  navLinks.classList.toggle('show');
+  menuBtn.classList.toggle('active');
+});
+
+// Close menu when a link is clicked (mobile)
+navLinkItems.forEach(link => {
+  link.addEventListener('click', () => {
+    navLinks.classList.remove('show');
+    menuBtn.classList.remove('active');
+  });
+});
+
+// Highlight active link on scroll
+const sections = document.querySelectorAll("section[id]");
+window.addEventListener("scroll", () => {
+  let current = "";
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 100;
+    const sectionHeight = section.offsetHeight;
+    if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+      current = section.getAttribute("id");
     }
   });
 
-  // Highlight nav link based on scroll
-  const sections = document.querySelectorAll("section[id]");
-  const navLinkItems = document.querySelectorAll(".nav-link");
-
-  window.addEventListener("scroll", () => {
-    let current = "";
-
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop - 150;
-      const sectionHeight = section.offsetHeight;
-      if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
-        current = section.getAttribute("id");
-      }
-    });
-
-    navLinkItems.forEach(link => {
-      link.classList.remove("active");
-      const href = link.getAttribute("href");
-      if (href && href.startsWith("#") && href === `#${current}`) {
-        link.classList.add("active");
-      }
-    });
+  navLinkItems.forEach(link => {
+    link.classList.remove("active");
+    if (link.getAttribute("href") === `#${current}`) {
+      link.classList.add("active");
+    }
   });
-</script>
+});
+
+  </script>
 
 </body>
-</html>
 
+</html>
